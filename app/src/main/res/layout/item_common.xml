@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:skin="http://schemas.android.com/android/skin"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/item_bg">
+
+	<ImageView
+		android:id="@+id/item_common_icon"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="15dp"
+		android:src="@mipmap/setting_item_icon"/>
+
+	<LinearLayout
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:layout_weight="1"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@+id/item_common_title"
+			android:layout_width="wrap_content"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:text="设备1"
+			android:textColor="@color/font_major"
+			android:textSize="@dimen/font_small"/>
+
+		<TextView
+			android:id="@+id/item_common_name"
+			android:layout_width="wrap_content"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:drawablePadding="2dp"
+			android:text="设备1"
+			android:textColor="@color/theme_color"
+			android:textSize="@dimen/font_small"
+			skin:skin_enable="true"/>
+	</LinearLayout>
+
+	<View
+		android:id="@+id/item_common_line"
+		android:layout_width="1dp"
+		android:layout_height="match_parent"
+		android:background="@color/line"
+		android:visibility="gone"/>
+
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent">
+
+		<TextView
+			android:id="@+id/item_common_option"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:padding="10dp"
+			android:text="绑定设备"
+			android:textColor="@color/theme_color"
+			android:textSize="@dimen/font_small"
+			android:visibility="gone"
+			skin:skin_enable="true"/>
+
+		<ImageView
+			android:id="@+id/item_common_arrow"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:layout_marginRight="10dp"
+			android:src="@mipmap/arrow_right"
+			android:visibility="gone"/>
+
+		<com.junhao.baby.widget.SwitchButton
+			android:id="@+id/item_common_switch"
+			android:layout_width="60dp"
+			android:layout_height="20dp"
+			android:layout_centerVertical="true"
+			android:checked="true"
+			android:track="@drawable/switch_track_drawable"
+			android:visibility="gone"/>
+	</RelativeLayout>
+</LinearLayout>

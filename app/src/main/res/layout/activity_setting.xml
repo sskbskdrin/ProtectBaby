@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:skin="http://schemas.android.com/android/skin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/main_bg"
+    android:orientation="vertical"
+    skin:skin_enable="true">
+
+    <RelativeLayout
+        android:id="@+id/action_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_height">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            android:src="@mipmap/back_icon" />
+
+        <TextView
+            android:id="@+id/action_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="个人信息设置"
+            android:textColor="@color/font_normal"
+            android:textSize="@dimen/font_middle" />
+
+        <RadioGroup
+            android:id="@+id/setting_theme_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/setting_theme_red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/setting_theme_red"
+                android:checked="true"
+                android:padding="2dp" />
+
+            <RadioButton
+                android:id="@+id/setting_theme_blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/setting_theme_blue"
+                android:padding="2dp" />
+
+            <RadioButton
+                android:id="@+id/setting_theme_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/setting_theme_black"
+                android:padding="2dp" />
+
+        </RadioGroup>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/setting_head"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@mipmap/head_bg"
+        android:scaleType="center"
+        android:src="@mipmap/default_head" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:drawableLeft="@mipmap/setting_name_light_icon"
+                android:drawablePadding="@dimen/padding_small"
+                android:text="姓名"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_small" />
+
+            <TextView
+                android:id="@+id/setting_name"
+                style="@style/edit_style"
+                android:layout_width="0dp"
+                android:layout_weight="4" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:drawableLeft="@mipmap/setting_baby_name_light_icon"
+                android:drawablePadding="@dimen/padding_small"
+                android:text="宝宝昵称"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_small" />
+
+            <TextView
+                android:id="@+id/setting_baby_name"
+                style="@style/edit_style"
+                android:layout_width="0dp"
+                android:layout_weight="4" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:drawableLeft="@mipmap/setting_week_light_icon"
+                android:drawablePadding="@dimen/padding_small"
+                android:text="怀孕周数"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_small" />
+
+            <TextView
+                android:id="@+id/setting_week"
+                style="@style/edit_style"
+                android:layout_width="0dp"
+                android:layout_weight="4" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:drawableLeft="@mipmap/setting_pre_light_icon"
+                android:drawablePadding="@dimen/padding_small"
+                android:text="预产期"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_small" />
+
+            <TextView
+                android:id="@+id/setting_pre_date"
+                style="@style/edit_style"
+                android:layout_width="0dp"
+                android:layout_weight="4" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:drawableLeft="@mipmap/setting_pre_light_icon"
+                android:drawablePadding="@dimen/padding_small"
+                android:text="受孕日期"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_small" />
+
+            <TextView
+                android:id="@+id/setting_conceive_date"
+                style="@style/edit_style"
+                android:layout_width="0dp"
+                android:layout_weight="4" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/setting_commit"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_white_bg"
+        android:gravity="center"
+        android:text="提交"
+        skin:skin_enable="true"
+        android:textColor="@color/theme_color"
+        android:textSize="@dimen/font_normal"
+        android:visibility="gone" />
+
+</LinearLayout>

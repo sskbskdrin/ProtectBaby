@@ -1,0 +1,21 @@
+<resources>>
+
+	<style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+		<item name="android:launchMode">singleTop</item>
+		<item name="android:overScrollMode">never</item>
+		<item name="android:statusBarColor">@color/transparent</item>
+		<item name="android:textColorHint">@color/font_minor</item>
+		<item name="android:screenOrientation">portrait</item>
+		<item name="android:windowSoftInputMode">adjustResize|stateAlwaysHidden</item>
+		<item name="android:windowTranslucentStatus">false</item>
+		<item name="android:windowTranslucentNavigation">true</item>
+		<item name="android:fitsSystemWindows">true</item>
+	</style>
+
+	<style name="LoginActivityTheme">
+		<item name="android:statusBarColor">@color/transparent</item>
+		<item name="android:windowSoftInputMode">adjustResize|stateAlwaysHidden</item>
+	</style>
+
+	<style name="BaseDialogTheme" parent="android:Theme.Material.Light.Dialog.MinWidth"/>
+</resources>

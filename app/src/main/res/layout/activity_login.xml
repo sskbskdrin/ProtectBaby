@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:skin="http://schemas.android.com/android/skin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/main_bg"
+    android:orientation="vertical"
+    skin:skin_enable="true">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:text="第一次登入，请先完善信息"
+        android:textColor="@color/font_normal"
+        android:textSize="@dimen/font_small" />
+
+    <ImageView
+        android:id="@+id/login_head"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@mipmap/head_bg"
+        android:scaleType="center"
+        android:src="@mipmap/default_head" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/login_name"
+            style="@style/edit_style"
+            android:drawableLeft="@mipmap/login_name_icon"
+            android:drawablePadding="@dimen/padding_small"
+            android:hint="姓名" />
+
+        <EditText
+            android:id="@+id/login_baby_name"
+            style="@style/edit_style"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@mipmap/login_baby_icon"
+            android:drawablePadding="@dimen/padding_small"
+            android:hint="宝宝昵称" />
+
+        <TextView
+            android:id="@+id/login_conceive_time"
+            style="@style/edit_style"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@mipmap/login_conceive_icon"
+            android:drawablePadding="@dimen/padding_small"
+            android:hint="怀孕日期" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/login_commit"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/button_white_bg"
+        android:gravity="center"
+        android:text="提交"
+        android:textColor="@color/theme_color"
+        android:textSize="@dimen/font_normal"
+        skin:skin_enable="true" />
+
+</LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">@android:color/white</color>
+
+    <color name="theme_color">#FFFD5293</color>
+    <color name="button_theme_start">#FFF77062</color>
+    <color name="button_theme_end">#FFFE5196</color>
+    <color name="button_theme_gary_start">#88F77062</color>
+    <color name="button_theme_gary_end">#88FE5196</color>
+    <color name="secondary">#FFFFF591</color>
+
+    <color name="touch_color">#a0dbdbdb</color>
+
+    <!--主标题颜色-->
+    <color name="font_major">#545C69</color>
+    <!--副标题颜色-->
+    <color name="font_minor">#9BA8BA</color>
+    <color name="font_normal">@color/white</color>
+
+    <color name="line">#FFEEEEEE</color>
+
+    <!--透明色-->
+    <color name="transparent">#00000000</color>
+    <color name="translucent_light">#A0FFFFFF</color>
+    <color name="translucent_dark">#80000000</color>
+
+</resources>

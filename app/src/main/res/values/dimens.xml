@@ -1,0 +1,34 @@
+<resources>
+
+    <dimen name="font_mini">12sp</dimen>
+    <dimen name="font_small">14sp</dimen>
+    <dimen name="font_normal">16sp</dimen>
+    <dimen name="font_middle">18sp</dimen>
+
+    <dimen name="padding_small">5dp</dimen>
+    <dimen name="padding_normal">10dp</dimen>
+    <dimen name="padding_middle">15dp</dimen>
+    <dimen name="padding_lager">20dp</dimen>
+
+    <dimen name="actionbar_height">50dp</dimen>
+
+    <dimen name="home_shadow_width">15dp</dimen>
+    <dimen name="home_menu_offset">100dp</dimen>
+
+    <!--item 间隔距离-->
+    <dimen name="item_interval">16dp</dimen>
+    <!--标题文字大小-->
+    <dimen name="textSize_alert_title">22sp</dimen>
+    <dimen name="textSize_actionsheet_title">14sp</dimen>
+    <!--线条粗细-->
+    <dimen name="size_divider">0.5dp</dimen>
+    <!--按钮的高度-->
+
+    <dimen name="chat_head_width">40dp</dimen>
+    <dimen name="chat_head_height">40dp</dimen>
+    <item name="window_fill" type="dimen">100%</item>
+    <item name="dialog_width" type="dimen">80%</item>
+    <item name="dialog_large_width" type="dimen">60%</item>
+
+    <dimen name="cardPadding">10dp</dimen>
+</resources>
