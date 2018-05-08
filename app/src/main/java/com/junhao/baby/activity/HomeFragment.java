@@ -29,6 +29,7 @@ import com.junhao.baby.R;
 import com.junhao.baby.bean.Device;
 import com.junhao.baby.bean.StatisticsBean;
 import com.junhao.baby.bean.User;
+import com.junhao.baby.db.DosageDao;
 import com.junhao.baby.db.ThreadPool;
 import com.junhao.baby.service.BluetoothScanListener;
 import com.junhao.baby.service.BluetoothService;
@@ -135,6 +136,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                             mDialog.dismiss();
                         }
                         ToastUtil.showTip(getContext(), "设备已绑定", "");
+                        Device.addDevice(ServiceManager.getInstance().getDeviceAddress(), ServiceManager.getInstance
+                                ().getDeviceName());
                     } else {
                         ToastUtil.showTip(getContext(), "设备拒绝绑定", "");
                     }
@@ -228,6 +231,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         mTotalDosageView.setText(ss);
+    }
+
+    private void getTotalDosage() {
+        DosageDao.getInstance().queryAll();
     }
 
     @Override

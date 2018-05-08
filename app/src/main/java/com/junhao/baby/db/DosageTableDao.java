@@ -37,11 +37,22 @@ public class DosageTableDao extends BaseDao<DosageTableBean> {
         return mInstance;
     }
 
+    public synchronized DosageTableBean queryForIdAndAddress(int index, String address) {
+        DosageTableBean result = null;
+        try {
+            result = mDao.queryBuilder().where().eq("index", index).and().eq("address", address).queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     @Override
     public synchronized int addOrUpdate(DosageTableBean bean) {
         int result = -1;
         try {
-            DosageTableBean temp = mDao.queryBuilder().where().eq(bean.getIdFieldName(), bean.getId()).queryForFirst();
+            DosageTableBean temp = mDao.queryBuilder().where().eq(bean.getIdFieldName(), bean
+                    .getId()).and().eq("address", bean.address).queryForFirst();
             if (temp != null) {
                 bean.id = temp.id;
                 result = mDao.update(bean);

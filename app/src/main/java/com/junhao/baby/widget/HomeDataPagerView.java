@@ -143,7 +143,7 @@ public class HomeDataPagerView extends LinearLayout {
             endTime = System.currentTimeMillis();
         }
         endTime /= 1000;
-        DosageBean indexBean = DosageDao.getInstance().queryLastForTime(startTime);
+        DosageBean indexBean = DosageDao.getInstance().queryLastForTime(startTime, null);
         List<DosageBean> list = DosageDao.getInstance().queryRange(startTime, endTime);
         double sum = 0;
         if (indexBean != null) {
@@ -173,8 +173,8 @@ public class HomeDataPagerView extends LinearLayout {
     }
 
     private static double getDosage(long startTime, long endTime, boolean to) {
-        DosageBean startBean = DosageDao.getInstance().queryLastForTime(startTime / 1000);
-        DosageBean endBean = DosageDao.getInstance().queryLastForTime(endTime / 1000);
+        DosageBean startBean = DosageDao.getInstance().queryLastForTime(startTime / 1000, null);
+        DosageBean endBean = DosageDao.getInstance().queryLastForTime(endTime / 1000, null);
         double sum;
         if (startBean == null) {
             if (endBean == null) {

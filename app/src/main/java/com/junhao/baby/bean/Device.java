@@ -1,5 +1,7 @@
 package com.junhao.baby.bean;
 
+import android.text.TextUtils;
+
 import com.junhao.baby.utils.CommonUtils;
 import com.junhao.baby.utils.SpfUtil;
 
@@ -18,7 +20,6 @@ public class Device {
     public static final String LAST_TEMPERATURE = "last_temperature";
     public static final String LAST_BATTERY = "last_battery";
     public static final String LAST_TOTAL_DOSAGE = "last_total_dosage";
-    public static final String LAST_ALERT_STATUS = "last_alert_status";
     public static final String LAST_ALERT_THRESHOLD = "last_alert_threshold";
     public static final String LAST_ALERT_TOTAL_THRESHOLD = "last_alert_total_threshold";
     public static final String LAST_UPDATE_TIME = "last_update_time";
@@ -28,6 +29,8 @@ public class Device {
     public static final String ALERT_VOICE = "alert_voice";
     public static final String ALERT_PHONE_VIBRATOR = "alert_phone_vibrator";
     public static final String ALERT_PHONE_VOICE = "alert_phone_voice";
+
+    private static final String DEVICE_LIST = "device_list";
 
     //    private static final String STATUS_DEVICE_NOTIFY = "status_device_notify";
     //    private static final String STATUS_PHONE_NOTIFY = "status_phone_notify";
@@ -53,24 +56,78 @@ public class Device {
         DEVICE_BL_TIME_LIST.add(new Item("常亮", 9005));
     }
 
-    private static DeviceBean mDevice;
-
-    private String name;
-    private String address;
-    private int backLightTime;
-    private boolean alertStatus;
-    private boolean voice;
-    private boolean vibrator;
-    private String alertThreshold;
-    private String alertTotalThreshold;
-    private String deviceNumber;
-    private String lastDosage;
-    private String lastTotalDosage;
-    private int lastTemperature;
-    private int lastBattery;
-    private long lastUpdateTime;
-
     private Device() {
+    }
+
+    public Device(String address, String name) {
+        this.address = address;
+        this.name = name;
+    }
+
+    public String address;
+    public String name;
+
+    public String toSimpleString() {
+        return address + "=" + name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Device) {
+            Device temp = (Device) obj;
+            if (address == null) {
+                return TextUtils.isEmpty(temp.address);
+            } else {
+                return address.equals(temp.address);
+            }
+        }
+        return false;
+    }
+
+    private static Device parse(String value) {
+        if (!TextUtils.isEmpty(value)) {
+            String[] str = value.split("=");
+            if (str.length >= 2) {
+                return new Device(str[0], str[1]);
+            }
+        }
+        return new Device();
+    }
+
+    public static List<Device> getDeviceList() {
+        String value = SpfUtil.getString(DEVICE_LIST);
+        List<Device> list = new ArrayList<>(5);
+        if (!TextUtils.isEmpty(value)) {
+            String[] item = value.split("&");
+            for (String d : item) {
+                list.add(parse(d));
+            }
+        }
+        return list;
+    }
+
+    public static Device addDevice(String address, String name) {
+        List<Device> list = getDeviceList();
+        Device device = new Device(address, name);
+        if (list.indexOf(device) < 0) {
+            list.add(device);
+            saveDevice(list);
+        }
+        return device;
+    }
+
+    private static void saveDevice(List<Device> list) {
+        StringBuilder builder = new StringBuilder();
+        if (list != null) {
+            for (Device d : list) {
+                builder.append(d.toSimpleString());
+                builder.append("&");
+            }
+            if (builder.length() > 0) {
+                builder.setLength(builder.length() - 1);
+            }
+        }
+        SpfUtil.saveString(DEVICE_LIST, builder.toString());
     }
 
     public static int getNotifyType() {

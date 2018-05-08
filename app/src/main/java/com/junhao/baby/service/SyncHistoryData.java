@@ -169,7 +169,7 @@ public class SyncHistoryData {
         bean.dosageEachH = (float) (dosagePreS * 3600);
         bean.unit = 0;
 
-        DosageBean temp = DosageDao.getInstance().queryLastForTime(bean.time);
+        DosageBean temp = DosageDao.getInstance().queryLastForTime(bean.time, bean.address);
         if (temp != null) {
             bean.dosage = temp.dosage + dosagePreS * (bean.time - temp.time);
         } else {
@@ -222,7 +222,8 @@ public class SyncHistoryData {
                 onSendShutdownTotalDosageEnd();
                 return;
             }
-            DosageTableBean tableBean = DosageTableDao.getInstance().queryForId("index", index);
+            DosageTableBean tableBean = DosageTableDao.getInstance().queryForIdAndAddress(index, ServiceManager
+                    .getInstance().getDeviceAddress());
             if (tableBean == null) {
                 tableBean = new DosageTableBean();
                 tableBean.date = mLastTable.date - bootSecond;
@@ -250,7 +251,8 @@ public class SyncHistoryData {
                 @Override
                 public Object background() {
                     long itemTime = shutdownTime;
-                    DosageBean last = DosageDao.getInstance().queryLastForTime(itemTime);
+                    DosageBean last = DosageDao.getInstance().queryLastForTime(itemTime, ServiceManager
+                            .getInstance().getDeviceAddress());
                     if (last == null) {
                         last = DosageBean.obtain();
                     }
