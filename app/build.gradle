@@ -16,7 +16,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0.1.1"
+        versionName "1.0.1"
     }
     buildTypes {
         release {
@@ -35,9 +35,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:25.3.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.j256.ormlite:ormlite-android:5.1'
-    compile 'com.j256.ormlite:ormlite-core:5.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:support-v4:25.3.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.j256.ormlite:ormlite-android:5.1'
+    implementation 'com.j256.ormlite:ormlite-core:5.1'
 }
