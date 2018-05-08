@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="theme_color">#FF1C6188</color>
+    <color name="button_theme_start">#FF6C8594</color>
+    <color name="button_theme_end">#FF052536</color>
+    <color name="button_theme_gary_start">#88F77062</color>
+    <color name="button_theme_gary_end">#88FE5196</color>
+</resources>
