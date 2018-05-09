@@ -49,7 +49,7 @@ public class HomeDataPagerView extends LinearLayout {
             } else if (bean.type == 7) {
                 SimpleDateFormat format = new SimpleDateFormat("MM月dd日");
                 mDataView.setText("第" + bean.index + "周(" + format.format(new Date(bean.startTime)) + "-" + format
-                        .format(new Date(bean.endTime)) + ")");
+                    .format(new Date(bean.endTime)) + ")");
             } else if (bean.type == 30) {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月");
                 mDataView.setText(format.format(new Date(bean.endTime)));
@@ -164,7 +164,10 @@ public class HomeDataPagerView extends LinearLayout {
             }
         }
         if (indexBean != null) {
-            sum += (endTime - indexBean.time) * indexBean.dosageEachH;
+            DosageBean temp = DosageDao.getInstance().queryFirstForTime(indexBean.time, null);
+            if (temp != null) {
+                sum += (endTime - indexBean.time) * indexBean.dosageEachH;
+            }
         }
         if (sum <= 0) {
             sum = getDosage(startTime * 1000, endTime * 1000, false);

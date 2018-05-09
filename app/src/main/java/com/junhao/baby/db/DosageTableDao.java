@@ -14,7 +14,6 @@ import java.sql.SQLException;
  */
 public class DosageTableDao extends BaseDao<DosageTableBean> {
 
-
     private static DosageTableDao mInstance;
 
     private DosageTableDao(Context context, Class<DosageTableBean> clazz) {
@@ -51,8 +50,8 @@ public class DosageTableDao extends BaseDao<DosageTableBean> {
     public synchronized int addOrUpdate(DosageTableBean bean) {
         int result = -1;
         try {
-            DosageTableBean temp = mDao.queryBuilder().where().eq(bean.getIdFieldName(), bean
-                    .getId()).and().eq("address", bean.address).queryForFirst();
+            DosageTableBean temp = mDao.queryBuilder().where().eq(bean.getIdFieldName(), bean.getId()).and().eq
+                ("address", bean.address).queryForFirst();
             if (temp != null) {
                 bean.id = temp.id;
                 result = mDao.update(bean);

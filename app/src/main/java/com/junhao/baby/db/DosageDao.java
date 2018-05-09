@@ -1,6 +1,7 @@
 package com.junhao.baby.db;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
@@ -76,14 +77,40 @@ public class DosageDao extends BaseDao<DosageBean> {
             if (TextUtils.isEmpty(address)) {
                 bean = builder.where().le("time", maxTime).queryForFirst();
             } else {
-                bean = builder.where().le("time", maxTime).and().eq("address", ServiceManager
-                        .getInstance().getDeviceAddress())
-                        .queryForFirst();
+                bean = builder.where().le("time", maxTime).and().eq("address", address).queryForFirst();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return bean;
+    }
+
+    public DosageBean queryFirstForTime(long minTime, String address) {
+        QueryBuilder<DosageBean, Integer> builder = mDao.queryBuilder().orderBy("time", false);
+        DosageBean bean = null;
+        try {
+            if (TextUtils.isEmpty(address)) {
+                bean = builder.where().gt("time", minTime).queryForFirst();
+            } else {
+                bean = builder.where().lt("time", minTime).and().eq("address", address).queryForFirst();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bean;
+    }
+
+    public synchronized ArrayList<DosageBean> queryAllByAddress(@NonNull String address) {
+        List<DosageBean> list = new ArrayList<>();
+        try {
+            list = mDao.queryBuilder().orderBy("time", true).where().eq("address", address).query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        return (ArrayList<DosageBean>) list;
     }
 
     @Override

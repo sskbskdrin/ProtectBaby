@@ -38,17 +38,12 @@ import java.util.UUID;
 public class ServiceManager implements BluetoothScanListener, ServiceListener {
     private static final String TAG = "ServiceManager";
 
-    public static final UUID REVERSION_SERVICE_UUID = UUID.fromString
-            ("0000180a-0000-1000-8000-00805f9b34fb");
-    public static final UUID REVERSION_CHAR_UUID = UUID.fromString
-            ("00002a26-0000-1000-8000-00805f9b34fb");
+    public static final UUID REVERSION_SERVICE_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
+    public static final UUID REVERSION_CHAR_UUID = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
 
-    private static final UUID RX_SERVICE_UUID = UUID.fromString
-            ("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-    private static final UUID RX_CHAR_UUID = UUID.fromString
-            ("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
-    private static final UUID TX_CHAR_UUID = UUID.fromString
-            ("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+    private static final UUID RX_SERVICE_UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+    private static final UUID RX_CHAR_UUID = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+    private static final UUID TX_CHAR_UUID = UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
     private static final UUID DES_UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     private static final String CMD_REQUIRE_BIND = "# bl $";
@@ -178,8 +173,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                     break;
                 case WHAT_SCAN_START:
                     DeviceScanManage.stopScan(BabyApp.getContext());
-                    DeviceScanManage.startScan(BabyApp.getContext(), SCAN_PERIOD, ServiceManager
-                            .getInstance());
+                    DeviceScanManage.startScan(BabyApp.getContext(), SCAN_PERIOD, ServiceManager.getInstance());
                     mHandler.sendEmptyMessageDelayed(WHAT_SCAN_START, SCAN_PERIOD);
                     break;
                 case WHAT_SCAN_RESULT:
@@ -199,6 +193,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                     sendCommand(isNormalData == 0 ? CMD_TEMPERATURE_BATTERY : CMD_NORMAL_DATA);
                     mHandler.sendEmptyMessageDelayed(WHAT_SYNC_NORMAL_DATA, REAL_TIME_INTERVAL);
                     break;
+                default:
             }
             return true;
         }
@@ -306,8 +301,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
     public void onScanResult(BluetoothDevice device) {
         L.d(TAG, "device=" + device.getName() + "[" + device.toString() + "]");
         String name = device.getName();
-        if (!mDeviceList.contains(device) && name != null && name.length() == 8 && name.charAt(0) ==
-                'M') {
+        if (!mDeviceList.contains(device) && name != null && name.length() == 8 && name.charAt(0) == 'M') {
             mDeviceList.add(device);
             Message.obtain(mHandler, WHAT_SCAN_RESULT, device).sendToTarget();
         }
@@ -353,8 +347,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
     private void bindService() {
         DeviceScanManage.stopScan(BabyApp.getContext());
         Intent gattServiceIntent = new Intent(BabyApp.getContext(), BluetoothService.class);
-        BabyApp.getContext().bindService(gattServiceIntent, mServiceConnection, Context
-                .BIND_AUTO_CREATE);
+        BabyApp.getContext().bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void connect(String name, String address) {
@@ -399,8 +392,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                 }
                 if (threshold >= Device.getAlertThreshold()) {
                     if (Device.isPhoneVibrator() && dosageAlertEnable) {
-                        ShockUtil.startVibrate(BabyApp.getContext(), new long[]{800, 800,
-                                800, 800}, true);
+                        ShockUtil.startVibrate(BabyApp.getContext(), new long[]{800, 800, 800, 800}, true);
                     } else {
                         ShockUtil.stopVibrate(BabyApp.getContext());
                     }
@@ -431,10 +423,10 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                 if (unit > 1) {
                     dosage *= 1000;
                 }
-                if (System.currentTimeMillis() - SpfUtil.getLong("dosage_time") > 5 * 60 *
-                        1000) {
+                long current = System.currentTimeMillis();
+                if (SyncHistoryData.isSyncComplete && current - SpfUtil.getLong("dosage_time") > 60 * 1000) {
                     DosageBean bean = DosageBean.obtain();
-                    bean.time = System.currentTimeMillis() / 1000;
+                    bean.time = current / 1000;
                     bean.address = mDeviceAddress;
                     bean.name = mDeviceName;
                     bean.unit = 0;
@@ -442,12 +434,11 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                     bean.dosageEachH = Device.getLastDosage();
                     DosageDao.getInstance().addOrUpdate(bean);
                     bean.recycle();
-                    SpfUtil.saveLong("dosage_time", System.currentTimeMillis());
+                    SpfUtil.saveLong("dosage_time", current);
                 }
                 if (dosage >= Device.getAlertTotalThreshold()) {
                     if (Device.isPhoneVibrator() && dosageTotalAlertEnable) {
-                        ShockUtil.startVibrate(BabyApp.getContext(), new long[]{800, 800,
-                                800, 800}, true);
+                        ShockUtil.startVibrate(BabyApp.getContext(), new long[]{800, 800, 800, 800}, true);
                     } else {
                         ShockUtil.stopVibrate(BabyApp.getContext());
                     }
@@ -466,7 +457,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                         ShockUtil.stopVibrate(BabyApp.getContext());
                     }
                 }
-                Device.setLastTotalDosage(dosage);
+//                Device.setLastTotalDosage(dosage);
                 L.d(TAG, "实时总剂量==>" + value);
                 break;
             case 'C':
@@ -532,8 +523,8 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
             case 'P':
                 L.d(TAG, "镇子报警开关状态==>" + value);
                 boolean isVibrator = "on".equalsIgnoreCase(value);
-                if (Device.getLastTotalDosage() >= Device.getAlertTotalThreshold() || Device
-                        .getLastDosage() >= Device.getAlertThreshold()) {
+                if (Device.getLastTotalDosage() >= Device.getAlertTotalThreshold() || Device.getLastDosage() >=
+                    Device.getAlertThreshold()) {
                     if (!isVibrator) {
                         if (Device.getLastTotalDosage() >= Device.getAlertTotalThreshold()) {
                             dosageTotalAlertEnable = false;
@@ -649,8 +640,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
 
     public void pauseSyncRealTimeData() {
         mHandler.removeMessages(WHAT_SYNC_NORMAL_DATA);
-        if (mCommandList.contains(CMD_NORMAL_DATA) || mCommandList.contains
-                (CMD_TEMPERATURE_BATTERY)) {
+        if (mCommandList.contains(CMD_NORMAL_DATA) || mCommandList.contains(CMD_TEMPERATURE_BATTERY)) {
             mCommandList.remove(CMD_NORMAL_DATA);
             mCommandList.remove(CMD_TEMPERATURE_BATTERY);
         }

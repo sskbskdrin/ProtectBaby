@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.junhao.baby.BabyApp;
 import com.junhao.baby.R;
 import com.junhao.baby.bean.Device;
+import com.junhao.baby.bean.DosageBean;
 import com.junhao.baby.bean.StatisticsBean;
 import com.junhao.baby.bean.User;
 import com.junhao.baby.db.DosageDao;
@@ -52,7 +53,7 @@ import cn.feng.skin.manager.loader.SkinManager;
  * Created by sskbskdrin on 2018/3/2.
  */
 public class HomeFragment extends BaseFragment implements View.OnClickListener, BluetoothScanListener,
-        DeviceStateListener {
+    DeviceStateListener {
     private static final String TAG = "HomeFragment";
 
     private static final int WHAT_CLOSE = 1001;
@@ -89,6 +90,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     private String mHistoryType;
 
+    private double baseTotalDosage = 0;
+    private double lastDosage = 0;
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -114,8 +118,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     }
                     break;
                 case 'B':
-                    if (!TextUtils.isEmpty(value) && value.length() > 2) {
-                        alertTotalDosage(value, true);
+                    if (baseTotalDosage == 0 && lastDosage == 0) {
+                        loadTotalDosage();
+                    } else {
+                        if (!TextUtils.isEmpty(value) && value.length() > 2) {
+                            alertTotalDosage(value, true);
+                        }
                     }
                     break;
                 case 'D':
@@ -137,7 +145,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         }
                         ToastUtil.showTip(getContext(), "设备已绑定", "");
                         Device.addDevice(ServiceManager.getInstance().getDeviceAddress(), ServiceManager.getInstance
-                                ().getDeviceName());
+                            ().getDeviceName());
                     } else {
                         ToastUtil.showTip(getContext(), "设备拒绝绑定", "");
                     }
@@ -148,6 +156,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 case 'S':
                     mMenuView.setText("数据同步中...");
                     break;
+                default:
             }
             if (data != null && data[0] == 0x55) {
                 if (data[1] == 0x1a || data[1] == 0x18) {
@@ -197,7 +206,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 }
             }
             ss.setSpan(new ForegroundColorSpan(CommonUtils.getColor(getContext(), R.color.secondary)), 5, ss.length()
-                    , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
         mAlertTipView.setCompoundDrawables(left, null, null, null);
@@ -212,10 +221,17 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         if (value.charAt(value.length() - 1) - 0x30 > 1) {
             totalDosage *= 1000;
         }
-        float scale = totalDosage / Device.getAlertTotalThreshold();
+        if (lastDosage != 0 && lastDosage < totalDosage) {
+            baseTotalDosage += totalDosage - lastDosage;
+        }
+        lastDosage = totalDosage;
+
+        float scale = (float) (baseTotalDosage / Device.getAlertTotalThreshold());
         int level = (int) (10000 * (0.855 * scale + 0.07246f));
         SpannableString ss = new SpannableString("总剂量\n" + translate(value) + "Sv");
-        if (totalDosage >= Device.getAlertTotalThreshold()) {
+
+        Device.setAlertTotalThreshold(baseTotalDosage + " 0");
+        if (baseTotalDosage >= Device.getAlertTotalThreshold()) {
             mTotalDosageLayout.setBackgroundResource(R.drawable.home_alert_bg);
             mTotalDosageImageView.setImageResource(R.mipmap.home_total_static_a_icon);
             mTotalDosageView.setTextColor(SkinManager.getInstance().getColor(R.color.theme_color));
@@ -228,13 +244,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             mTotalDosageView.setTextColor(CommonUtils.getColor(getContext(), R.color.white));
             mTotalDosageTipView.setVisibility(View.INVISIBLE);
             ss.setSpan(new ForegroundColorSpan(CommonUtils.getColor(getContext(), R.color.secondary)), 3, ss.length()
-                    , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         mTotalDosageView.setText(ss);
-    }
-
-    private void getTotalDosage() {
-        DosageDao.getInstance().queryAll();
     }
 
     @Override
@@ -262,7 +274,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         mTotalDosageTipView = getView(R.id.home_total_tip);
         mTotalDosageStaticDrawable = CommonUtils.getDrawable(BabyApp.getContext(), R.drawable.home_s_total_dosage_bg);
         mTotalDosageDynamicDrawable = new BottleDrawable(BitmapFactory.decodeResource(getResources(), R.drawable
-                .home_d_total_dosage_down));
+            .home_d_total_dosage_down));
 
         mChartLeftView = getView(R.id.home_page_left);
         mChartLeftView.setOnClickListener(this);
@@ -480,6 +492,37 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             unit = "μ";
         }
         return value.substring(0, value.length() - 1) + unit;
+    }
+
+    private void loadTotalDosage() {
+        ThreadPool.execute(new ThreadPool.Callback<Double>() {
+            @Override
+            public Double background() {
+                List<Device> list = Device.getDeviceList();
+                double dosage = 0;
+                if (list != null) {
+                    for (Device device : list) {
+                        List<DosageBean> beans = DosageDao.getInstance().queryAllByAddress(device.address);
+                        if (beans.size() == 1) {
+                            dosage += beans.get(0).dosage;
+                        } else if (beans.size() > 1) {
+                            for (int i = 1; i < beans.size(); i++) {
+                                if (beans.get(i - 1).dosage > beans.get(i).dosage) {
+                                    dosage += beans.get(i - 1).dosage;
+                                }
+                            }
+                            dosage += beans.get(beans.size() - 1).dosage;
+                        }
+                    }
+                }
+                return dosage;
+            }
+
+            @Override
+            public void callback(Double value) {
+                baseTotalDosage = value;
+            }
+        });
     }
 
     private class Adapter extends PagerAdapter {

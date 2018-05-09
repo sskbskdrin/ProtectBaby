@@ -22,6 +22,7 @@ public class SyncHistoryData {
 
     private static SyncHistoryData mInstance;
     public static boolean isSyncMode;
+    public static boolean isSyncComplete = false;
 
     private DosageTableBean mLastTable;
     private int sendCount = 0;
@@ -133,7 +134,7 @@ public class SyncHistoryData {
         }
         if (L.IS_DEBUG) {
             L.d(TAG, "onTimeTable:time=" + DateFormatUtil.format(bean.date * 1000, DateFormatUtil.YY_M_D_H_M_S) + " "
-                    + "second=" + bean.second);
+                + "second=" + bean.second);
         }
     }
 
@@ -180,7 +181,7 @@ public class SyncHistoryData {
         }
         if (L.IS_DEBUG) {
             L.d(TAG, "onHistoryData:data=" + DateFormatUtil.format(bean.time * 1000, DateFormatUtil.YY_M_D_H_M_S) +
-                    "" + " dosage=" + bean.dosage + " unit=" + bean.unit);
+                "" + " dosage=" + bean.dosage + " unit=" + bean.unit);
         }
     }
 
@@ -196,12 +197,12 @@ public class SyncHistoryData {
         int index = getInt(data[2]);
         long second = convert(data[3], data[4], data[5], data[6]);
         final double dosagePreS = convert(data[7], data[8], data[9], data[10]) / 1000f / 3600.0f;
-        int unit = getInt(data[11]);
+        final int unit = getInt(data[11]);
         int bootSecond = convert(data[12], data[13], data[14], data[15]);
         int flag = getInt(data[16]);
         if (L.IS_DEBUG) {
             L.d(TAG, "onShutdownDosage:flag=" + flag + " pre=" + dosagePreS + " second=" + second + " " +
-                    "bootSecond=" + bootSecond);
+                "bootSecond=" + bootSecond);
         }
         if (flag == 0) {
             onSendShutdownTotalDosageEnd();
@@ -223,15 +224,15 @@ public class SyncHistoryData {
                 return;
             }
             DosageTableBean tableBean = DosageTableDao.getInstance().queryForIdAndAddress(index, ServiceManager
-                    .getInstance().getDeviceAddress());
+                .getInstance().getDeviceAddress());
             if (tableBean == null) {
                 tableBean = new DosageTableBean();
                 tableBean.date = mLastTable.date - bootSecond;
             }
             if (L.IS_DEBUG) {
                 L.d(TAG, "onShutdownDosage:date=" + DateFormatUtil.format(tableBean.date * 1000, DateFormatUtil
-                        .YY_M_D_H_M_S) + " syncDate=" + DateFormatUtil.format(mLastTable.date * 1000, DateFormatUtil
-                        .YY_M_D_H_M_S));
+                    .YY_M_D_H_M_S) + " syncDate=" + DateFormatUtil.format(mLastTable.date * 1000, DateFormatUtil
+                    .YY_M_D_H_M_S));
             }
             final long shutdownTime = tableBean.date;
             final long bootTime = mLastTable.date - bootSecond;
@@ -239,20 +240,19 @@ public class SyncHistoryData {
                 onSendShutdownTotalDosageEnd();
                 return;
             }
-            int newDosage = (int) ((bootTime - shutdownTime) * dosagePreS * 1000);
+            final int newDosage = (int) ((bootTime - shutdownTime) * dosagePreS * 1000);
             if (L.IS_DEBUG) {
                 L.d(TAG, "onShutdownDosage:shutdown time=" + DateFormatUtil.format(shutdownTime * 1000,
-                        DateFormatUtil.YY_M_D_H_M_S) + " boot time=" + DateFormatUtil.format(bootTime * 1000,
-                        DateFormatUtil.YY_M_D_H_M_S));
+                    DateFormatUtil.YY_M_D_H_M_S) + " boot time=" + DateFormatUtil.format(bootTime * 1000,
+                    DateFormatUtil.YY_M_D_H_M_S));
             }
-            sendShutdownTotalDosage(newDosage, unit);
 
             ThreadPool.execute(new ThreadPool.Callback<Object>() {
                 @Override
                 public Object background() {
                     long itemTime = shutdownTime;
-                    DosageBean last = DosageDao.getInstance().queryLastForTime(itemTime, ServiceManager
-                            .getInstance().getDeviceAddress());
+                    DosageBean last = DosageDao.getInstance().queryLastForTime(itemTime, ServiceManager.getInstance()
+                        .getDeviceAddress());
                     if (last == null) {
                         last = DosageBean.obtain();
                     }
@@ -271,8 +271,8 @@ public class SyncHistoryData {
                         last.recycle();
                         last = bean;
                         if (L.IS_DEBUG) {
-                            L.d(TAG, "onShutdownDosage:time=" + DateFormatUtil.format(bean.time * 1000, DateFormatUtil
-                                    .YY_M_D_H_M_S) + " dosage=" + bean.dosage);
+                            L.d(TAG, "onShutdownDosage:time=" + DateFormatUtil.format(bean.time * 1000,
+                                DateFormatUtil.YY_M_D_H_M_S) + " dosage=" + bean.dosage);
                         }
                     }
                     return null;
@@ -280,6 +280,7 @@ public class SyncHistoryData {
 
                 @Override
                 public void callback(Object o) {
+                    sendShutdownTotalDosage(newDosage, unit);
                 }
             });
         }
@@ -288,6 +289,7 @@ public class SyncHistoryData {
     private void onSendShutdownTotalDosageEnd() {
         L.d(TAG, "同步结束");
         isSyncMode = false;
+        isSyncComplete = true;
         ServiceManager.getInstance().sendCommand(ServiceManager.CMD_SYNC_STATE);
         ServiceManager.getInstance().startSyncRealTimeData();
         mInstance = null;
