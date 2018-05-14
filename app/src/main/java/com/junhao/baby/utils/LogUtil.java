@@ -2,6 +2,7 @@ package com.junhao.baby.utils;
 
 import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 
@@ -26,9 +27,9 @@ public class LogUtil {
 
     private static final String TAG = "LogUtil";
 
-    private static String logPath = Environment.getExternalStorageDirectory().getPath() + "/baby/";//log日志存放路径
+    private static String logPath = Environment.getExternalStorageDirectory().getPath() + "/baby/";
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.US);//日期格式;
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.US);
 
     private static Handler mHandler;
 
@@ -37,11 +38,9 @@ public class LogUtil {
      * 初始化，须在使用之前设置，最好在Application创建时调用
      */
     public static void init() {
-        new Thread(new Runnable() {
-
+        new HandlerThread("log") {
             @Override
-            public void run() {
-                Looper.prepare();
+            protected void onLooperPrepared() {
                 mHandler = new Handler(new Handler.Callback() {
                     BufferedWriter writer;
                     int count = 0;
@@ -66,7 +65,7 @@ public class LogUtil {
                             }
                             try {
                                 String fileName = logPath + "log_" + new SimpleDateFormat("MM-dd HH:mm:ss", Locale
-                                        .US).format(new Date()) + ".log";
+                                    .US).format(new Date()) + ".log";
                                 //log日志名，使用时间命名，保证不重复
                                 FileOutputStream fos = new FileOutputStream(fileName, true);
                                 //这里的第二个参数代表追加还是覆盖，true为追加，flase为覆盖
@@ -88,33 +87,32 @@ public class LogUtil {
                         return true;
                     }
                 });
-                Looper.loop();
             }
-        }).start();
+        }.start();
     }
 
     public static void v(String tag, String msg) {
-        String log = dateFormat.format(new Date()) + "V/" + tag + ": " + msg + "\n";//log日志内容，可以自行定制
-        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
+        String log = dateFormat.format(new Date()) + " V/" + tag + ": " + msg + "\n";
+        //        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
     }
 
     public static void d(String tag, String msg) {
-        String log = dateFormat.format(new Date()) + "D/" + tag + ": " + msg + "\n";//log日志内容，可以自行定制
-        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
+        String log = dateFormat.format(new Date()) + " D/" + tag + ": " + msg + "\n";
+        //        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
     }
 
     public static void i(String tag, String msg) {
-        String log = dateFormat.format(new Date()) + "I/" + tag + ": " + msg + "\n";//log日志内容，可以自行定制
-        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
+        String log = dateFormat.format(new Date()) + " I/" + tag + ": " + msg + "\n";
+        //        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
     }
 
     public static void w(String tag, String msg) {
-        String log = dateFormat.format(new Date()) + "W/" + tag + ": " + msg + "\n";//log日志内容，可以自行定制
-        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
+        String log = dateFormat.format(new Date()) + " W/" + tag + ": " + msg + "\n";
+        //        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
     }
 
     public static void e(String tag, String msg) {
-        String log = dateFormat.format(new Date()) + "E/" + tag + ": " + msg + "\n";//log日志内容，可以自行定制
-        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
+        String log = dateFormat.format(new Date()) + " E/" + tag + ": " + msg + "\n";
+        //        Message.obtain(mHandler, log.hashCode(), log).sendToTarget();
     }
 }

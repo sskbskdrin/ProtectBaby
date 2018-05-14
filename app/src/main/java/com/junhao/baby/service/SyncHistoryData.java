@@ -59,6 +59,8 @@ public class SyncHistoryData {
                         }
                         tempData = data;
                         if (repeatCount > 6) {
+                            tempData = null;
+                            repeatCount = 0;
                             requireTimeTable();
                             return;
                         }

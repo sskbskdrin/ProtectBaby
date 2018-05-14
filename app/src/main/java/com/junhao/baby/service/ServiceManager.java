@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Size;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.junhao.baby.BabyApp;
 import com.junhao.baby.bean.Device;
@@ -202,6 +203,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
     private int isNormalData;
 
     private ServiceManager() {
+        L.d(TAG, "ServiceManager: create");
         bindService();
         mCallbacks = new HashMap<>(26);
         mScanListeners = new HashSet<>(3);
@@ -351,6 +353,10 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
     }
 
     public void connect(String name, String address) {
+        L.d(TAG, "connect: name=" + name + " address=" + address + " isConnected=" + isConnected());
+        if (isConnected()) {
+            return;
+        }
         mDeviceName = name;
         mDeviceAddress = address;
         stopScan();
@@ -369,6 +375,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
     }
 
     public void disconnect() {
+        L.d(TAG, "disconnect: ");
         if (mBluetoothService != null) {
             mBluetoothService.disconnect();
         }
@@ -457,7 +464,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                         ShockUtil.stopVibrate(BabyApp.getContext());
                     }
                 }
-//                Device.setLastTotalDosage(dosage);
+                //                Device.setLastTotalDosage(dosage);
                 L.d(TAG, "实时总剂量==>" + value);
                 break;
             case 'C':
@@ -592,6 +599,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
     }
 
     private void startSync() {
+        L.d(TAG, "startSync: ");
         isReply = true;
         mCommandList.clear();
         SyncHistoryData.comeInMode();

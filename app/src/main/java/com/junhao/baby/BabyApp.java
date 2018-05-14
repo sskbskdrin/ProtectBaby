@@ -8,6 +8,7 @@ import com.junhao.baby.db.ThreadPool;
 import com.junhao.baby.utils.LogUtil;
 import com.junhao.baby.utils.SpfUtil;
 import com.junhao.baby.utils.TimerManage;
+import com.orhanobut.logger.LogcatHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,7 +31,8 @@ public class BabyApp extends Application {
         System.out.println("BabyApp");
         mContext = this;
         CrashHandler.getInstance().init(this);
-        LogUtil.init();
+        LogcatHelper.getInstance().init(this);
+        LogcatHelper.getInstance().start();
         SpfUtil.init(this);
         DatabaseHelper.init();
         initSkinLoader();
