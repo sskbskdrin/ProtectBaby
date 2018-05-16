@@ -46,10 +46,8 @@ public class MainActivity extends BaseActivity {
         mSlidingMenu.setFadeDegree(0.35f);
         mSlidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
         mSlidingMenu.setMenu(R.layout.main_menu_layout);
-        manager.beginTransaction().replace(R.id.main_content, new HomeFragment(), "main_content")
-                .commit();
-        manager.beginTransaction().replace(R.id.main_menu_content, new MenuFragment(),
-                "main_menu").commit();
+        manager.beginTransaction().replace(R.id.main_content, new HomeFragment(), "main_content").commit();
+        manager.beginTransaction().replace(R.id.main_menu_content, new MenuFragment(), "main_menu").commit();
     }
 
     @Override
@@ -69,11 +67,10 @@ public class MainActivity extends BaseActivity {
             finish();
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                    PackageManager
-                    .PERMISSION_GRANTED) {
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager
+                .PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        REQUEST_LOCATION_PERMISSION);
+                    REQUEST_LOCATION_PERMISSION);
             }
         }
     }
@@ -105,9 +102,8 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-                                           @NonNull int[]
-            grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[]
+        grantResults) {
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -123,9 +119,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ServiceManager.getInstance().disconnect();
-        TimerManage.getInstance().startTimerTask("exit", 60000, new TimerManage.TimerTaskListener
-                () {
+        ServiceManager.getInstance().unBindDevice();
+        TimerManage.getInstance().startTimerTask("exit", 60000, new TimerManage.TimerTaskListener() {
             @Override
             public void onTimer(String tag, int count) {
                 System.exit(0);

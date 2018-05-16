@@ -64,7 +64,7 @@ public class LogUtil {
                                 file.mkdirs();//创建父路径
                             }
                             try {
-                                String fileName = logPath + "log_" + new SimpleDateFormat("MM-dd HH:mm:ss", Locale
+                                String fileName = logPath + "log_" + new SimpleDateFormat("MM-dd'_'HH:mm:ss", Locale
                                     .US).format(new Date()) + ".log";
                                 //log日志名，使用时间命名，保证不重复
                                 FileOutputStream fos = new FileOutputStream(fileName, true);

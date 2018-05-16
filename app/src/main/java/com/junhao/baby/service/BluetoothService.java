@@ -174,6 +174,7 @@ public class BluetoothService extends Service {
         }
         if (mBluetoothGatt != null) {
             mBluetoothGatt.disconnect();
+            mBluetoothGatt.close();
             mBluetoothGatt = null;
         }
     }

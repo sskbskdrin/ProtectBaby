@@ -244,14 +244,16 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
         if (state == BluetoothService.STATE_CONNECTED) {
             mHandler.removeMessages(WHAT_RETRY_CONNECT);
         } else if (state == BluetoothService.STATE_DISCONNECTED) {
+            mHandler.removeCallbacksAndMessages(null);
             SyncHistoryData.isSyncMode = false;
             FirmwareUpdate.isUpdateMode = false;
-            mHandler.removeMessages(WHAT_SYNC_NORMAL_DATA);
             TimerManage.getInstance().stopTimerAll();
             mRxService = null;
             mRxChar = null;
             ShockUtil.stopVibrate(BabyApp.getContext());
             VoiceUtil.stop();
+            mDeviceList.clear();
+            mCommandList.clear();
         }
         Message.obtain(mHandler, WHAT_STATE_CHANGE, state, 0).sendToTarget();
     }
@@ -381,6 +383,23 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
         }
     }
 
+    public void unBindDevice() {
+        if (isConnected()) {
+            disconnect();
+            mDeviceList.clear();
+            mCommandList.clear();
+            onConnectStatusChange(BluetoothService.STATE_DISCONNECTED);
+            SyncHistoryData.isSyncMode = false;
+            FirmwareUpdate.isUpdateMode = false;
+            mHandler.removeMessages(WHAT_SYNC_NORMAL_DATA);
+            TimerManage.getInstance().stopTimerAll();
+            mRxService = null;
+            mRxChar = null;
+            ShockUtil.stopVibrate(BabyApp.getContext());
+            VoiceUtil.stop();
+        }
+    }
+
     private void dispatchData(String data) {
         if (TextUtils.isEmpty(data) || data.length() < 4) {
             return;
@@ -494,7 +513,14 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                     }
                 }
                 if (Device.getAlertThreshold() != threshold) {
-                    sendCommand("# sa " + Device.getAlertThreshold() + " 0 $");
+                    String content = String.valueOf(Device.getAlertThreshold());
+                    if (content.length() < 5 && content.indexOf('.') < 0) {
+                        content += ".";
+                    }
+                    while (content.length() < 5) {
+                        content += "0";
+                    }
+                    sendCommand("# sa " + content + " 0 $");
                 }
                 break;
             case 'G':
@@ -573,7 +599,14 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                         }
                     }
                     if (Device.getAlertTotalThreshold() != threshold) {
-                        sendCommand("# st " + Device.getAlertTotalThreshold() + " 0 $");
+                        String content = String.valueOf(Device.getAlertTotalThreshold());
+                        if (content.length() < 5 && content.indexOf('.') < 0) {
+                            content += ".";
+                        }
+                        while (content.length() < 5) {
+                            content += "0";
+                        }
+                        sendCommand("# st " + content + " 0 $");
                     }
                 }
                 break;

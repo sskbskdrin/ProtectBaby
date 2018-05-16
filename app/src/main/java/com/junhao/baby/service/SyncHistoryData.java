@@ -59,8 +59,10 @@ public class SyncHistoryData {
                         }
                         tempData = data;
                         if (repeatCount > 6) {
-                            tempData = null;
-                            repeatCount = 0;
+                            if (repeatCount > 8) {
+                                onSendShutdownTotalDosageEnd();
+                                return;
+                            }
                             requireTimeTable();
                             return;
                         }

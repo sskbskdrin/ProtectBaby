@@ -61,6 +61,13 @@ public class LogcatHelper {
         mLogDumper.start();
     }
 
+    public boolean isRunning() {
+        if (mLogDumper != null) {
+            return mLogDumper.mRunning;
+        }
+        return false;
+    }
+
     public void stop() {
         if (mLogDumper != null) {
             mLogDumper.stopLogs();
@@ -135,6 +142,7 @@ public class LogcatHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
+                mRunning = false;
                 if (logcatProc != null) {
                     logcatProc.destroy();
                     logcatProc = null;

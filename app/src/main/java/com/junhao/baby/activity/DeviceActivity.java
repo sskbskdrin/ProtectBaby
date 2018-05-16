@@ -60,29 +60,27 @@ public class DeviceActivity extends CommonActivity<DeviceBean> {
         holder.setText(R.id.item_common_title, "设备" + (holder.position() + 1));
         holder.setText(R.id.item_common_name, item.name);
         holder.setText(R.id.item_common_option, "解绑设备");
-        showView(true, holder.getView(R.id.item_common_icon), holder.getView(R.id
-                .item_common_title), holder.getView
-                (R.id.item_common_name), holder.getView(R.id.item_common_line), holder.getView(R
-                .id.item_common_option));
+        showView(true, holder.getView(R.id.item_common_icon), holder.getView(R.id.item_common_title), holder.getView
+            (R.id.item_common_name), holder.getView(R.id.item_common_line), holder.getView(R.id.item_common_option));
         holder.getView(R.id.item_common_option).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog dialog = new AlertDialog(mContext);
                 dialog.setTitle("解绑设备");
                 SpannableString ss = new SpannableString("您确定要解绑以下设备吗？\n" + item.name);
-                ss.setSpan(new ForegroundColorSpan(SkinManager.getInstance().getColor(R.color
-                        .theme_color)), ss.length()
-                        - item.name.length(), ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new ForegroundColorSpan(SkinManager.getInstance().getColor(R.color.theme_color)), ss
+                    .length() - item.name.length(), ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 dialog.setMessage(ss);
                 dialog.setOnClickOkListener(new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         User.getInstance().bindAddress("", "");
                         mList.remove(item);
+                        setTipText("您已绑定了" + mList.size() + "个设备");
                         notifyDataSetChanged();
                         dialog.dismiss();
                         ToastUtil.showTip(mContext, "解绑成功", "");
-                        ServiceManager.getInstance().disconnect();
+                        ServiceManager.getInstance().unBindDevice();
                     }
                 });
                 dialog.show();

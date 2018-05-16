@@ -37,6 +37,7 @@ import com.junhao.baby.service.BluetoothService;
 import com.junhao.baby.service.DeviceStateListener;
 import com.junhao.baby.service.ServiceManager;
 import com.junhao.baby.utils.CommonUtils;
+import com.junhao.baby.utils.L;
 import com.junhao.baby.utils.TimerManage;
 import com.junhao.baby.utils.ToastUtil;
 import com.junhao.baby.widget.AlertDialog;
@@ -142,6 +143,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     if ("OK".equalsIgnoreCase(value)) {
                         if (mDialog != null) {
                             mDialog.dismiss();
+                            mList.clear();
                         }
                         ToastUtil.showTip(getContext(), "设备已绑定", "");
                         Device.addDevice(ServiceManager.getInstance().getDeviceAddress(), ServiceManager.getInstance
@@ -407,7 +409,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         TimerManage.getInstance().startTimerTask("1234", 1000, new TimerManage.TimerTaskListener() {
             @Override
             public void onTimer(String tag, int count) {
-                Log.d(TAG, "onTimer: tag=" + tag + " count=" + count);
+                L.d(TAG, "onTimer: tag=" + tag + " count=" + count);
             }
         });
         TimerManage.getInstance().stopTimerTask("1234");
@@ -466,7 +468,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             alertDosage(Device.getLastDosage() + " 0", false);
             alertTotalDosage(Device.getLastTotalDosage() + " 0", false);
             hideLoadingDialog();
-            showConnectTip(User.getInstance().getDeviceName(), User.getInstance().getDeviceAddress());
+            if (!TextUtils.isEmpty(User.getInstance().getDeviceAddress())) {
+                showConnectTip(User.getInstance().getDeviceName(), User.getInstance().getDeviceAddress());
+            }
         }
     }
 

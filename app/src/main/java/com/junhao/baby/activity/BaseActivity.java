@@ -13,6 +13,7 @@ import android.support.annotation.LayoutRes;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.junhao.baby.R;
 import com.junhao.baby.utils.CommonUtils;
+import com.junhao.baby.utils.L;
 import com.junhao.baby.utils.ToastUtil;
 import com.junhao.baby.widget.LoadingDialog;
 
@@ -38,6 +40,7 @@ import cn.feng.skin.manager.loader.SkinManager;
  * @date 17/10/19
  */
 public class BaseActivity extends FragmentActivity implements ISkinUpdate, IDynamicNewView {
+    protected static String TAG = "BaseActivity";
 
     protected static final int REQUEST_PICTURE_CODE = 1010;
     protected static final int STORAGE_PERMISSION_REQUEST_CODE = 3001;
@@ -53,6 +56,8 @@ public class BaseActivity extends FragmentActivity implements ISkinUpdate, IDyna
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TAG = getClass().getSimpleName();
+        L.d(TAG, "onCreate: ");
         setTheme(R.style.AppTheme);
         mContext = this;
         try {
@@ -81,9 +86,9 @@ public class BaseActivity extends FragmentActivity implements ISkinUpdate, IDyna
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-// View
-//                .SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            //            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+            // View
+            //                .SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);// calculateStatusColor(Color.WHITE,
             // (int) alphaValue)
@@ -267,9 +272,8 @@ public class BaseActivity extends FragmentActivity implements ISkinUpdate, IDyna
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 if (shouldShowRequestPermissionRationale(permission)) {
-                    if (Manifest.permission.READ_EXTERNAL_STORAGE.equals(permission) || Manifest
-                            .permission
-                            .WRITE_EXTERNAL_STORAGE.equals(permission)) {
+                    if (Manifest.permission.READ_EXTERNAL_STORAGE.equals(permission) || Manifest.permission
+                        .WRITE_EXTERNAL_STORAGE.equals(permission)) {
                         showToast("请开启存储权限，否则无法使用该功能！", true);
                     } else if (Manifest.permission.RECORD_AUDIO.equals(permission)) {
                         showToast("请开启录音权限，否则无法使用该功能！", true);
