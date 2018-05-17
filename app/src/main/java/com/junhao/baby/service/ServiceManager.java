@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Size;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.junhao.baby.BabyApp;
 import com.junhao.baby.bean.Device;
@@ -462,7 +461,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                     bean.recycle();
                     SpfUtil.saveLong("dosage_time", current);
                 }
-                if (dosage >= Device.getAlertTotalThreshold()) {
+                if (Device.getLastTotalDosage() >= Device.getAlertTotalThreshold()) {
                     if (Device.isPhoneVibrator() && dosageTotalAlertEnable) {
                         ShockUtil.startVibrate(BabyApp.getContext(), new long[]{800, 800, 800, 800}, true);
                     } else {
@@ -557,7 +556,7 @@ public class ServiceManager implements BluetoothScanListener, ServiceListener {
                 L.d(TAG, "镇子报警开关状态==>" + value);
                 boolean isVibrator = "on".equalsIgnoreCase(value);
                 if (Device.getLastTotalDosage() >= Device.getAlertTotalThreshold() || Device.getLastDosage() >=
-                    Device.getAlertThreshold()) {
+                        Device.getAlertThreshold()) {
                     if (!isVibrator) {
                         if (Device.getLastTotalDosage() >= Device.getAlertTotalThreshold()) {
                             dosageTotalAlertEnable = false;

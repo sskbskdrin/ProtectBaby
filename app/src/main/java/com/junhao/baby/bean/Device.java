@@ -313,7 +313,7 @@ public class Device {
     }
 
     public static float getLastTotalDosage() {
-        return SpfUtil.getFloat(LAST_TOTAL_DOSAGE);
+        return SpfUtil.getFloat(LAST_TOTAL_DOSAGE, -1);
     }
 
     public static void setLastTotalDosage(float lastTotalDosage) {

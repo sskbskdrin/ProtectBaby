@@ -17,7 +17,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
@@ -54,7 +53,7 @@ import cn.feng.skin.manager.loader.SkinManager;
  * Created by sskbskdrin on 2018/3/2.
  */
 public class HomeFragment extends BaseFragment implements View.OnClickListener, BluetoothScanListener,
-    DeviceStateListener {
+        DeviceStateListener {
     private static final String TAG = "HomeFragment";
 
     private static final int WHAT_CLOSE = 1001;
@@ -119,7 +118,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     }
                     break;
                 case 'B':
-                    if (baseTotalDosage == 0 && lastDosage == 0) {
+                    if (baseTotalDosage <= 0 && lastDosage == 0) {
                         loadTotalDosage();
                     } else {
                         if (!TextUtils.isEmpty(value) && value.length() > 2) {
@@ -147,7 +146,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         }
                         ToastUtil.showTip(getContext(), "设备已绑定", "");
                         Device.addDevice(ServiceManager.getInstance().getDeviceAddress(), ServiceManager.getInstance
-                            ().getDeviceName());
+                                ().getDeviceName());
                     } else {
                         ToastUtil.showTip(getContext(), "设备拒绝绑定", "");
                     }
@@ -208,7 +207,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 }
             }
             ss.setSpan(new ForegroundColorSpan(CommonUtils.getColor(getContext(), R.color.secondary)), 5, ss.length()
-                , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                    , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
         mAlertTipView.setCompoundDrawables(left, null, null, null);
@@ -227,12 +226,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             baseTotalDosage += totalDosage - lastDosage;
         }
         lastDosage = totalDosage;
+        if (Device.getLastTotalDosage() < 0) {
+            baseTotalDosage = lastDosage;
+        }
 
         float scale = (float) (baseTotalDosage / Device.getAlertTotalThreshold());
         int level = (int) (10000 * (0.855 * scale + 0.07246f));
         SpannableString ss = new SpannableString("总剂量\n" + translate(value) + "Sv");
 
-        Device.setAlertTotalThreshold(baseTotalDosage + " 0");
+        Device.setLastTotalDosage((float) baseTotalDosage);
         if (baseTotalDosage >= Device.getAlertTotalThreshold()) {
             mTotalDosageLayout.setBackgroundResource(R.drawable.home_alert_bg);
             mTotalDosageImageView.setImageResource(R.mipmap.home_total_static_a_icon);
@@ -246,7 +248,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             mTotalDosageView.setTextColor(CommonUtils.getColor(getContext(), R.color.white));
             mTotalDosageTipView.setVisibility(View.INVISIBLE);
             ss.setSpan(new ForegroundColorSpan(CommonUtils.getColor(getContext(), R.color.secondary)), 3, ss.length()
-                , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                    , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         mTotalDosageView.setText(ss);
     }
@@ -276,7 +278,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         mTotalDosageTipView = getView(R.id.home_total_tip);
         mTotalDosageStaticDrawable = CommonUtils.getDrawable(BabyApp.getContext(), R.drawable.home_s_total_dosage_bg);
         mTotalDosageDynamicDrawable = new BottleDrawable(BitmapFactory.decodeResource(getResources(), R.drawable
-            .home_d_total_dosage_down));
+                .home_d_total_dosage_down));
 
         mChartLeftView = getView(R.id.home_page_left);
         mChartLeftView.setOnClickListener(this);
@@ -540,7 +542,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             mPageList = new ArrayList<>(5);
             updateList(list);
         }
-
 
         public void updateList(List<StatisticsBean> list) {
             if (mList != list) {
