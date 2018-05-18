@@ -44,6 +44,8 @@ import com.junhao.baby.widget.BottleDrawable;
 import com.junhao.baby.widget.DeviceDialog;
 import com.junhao.baby.widget.HomeDataPagerView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ import cn.feng.skin.manager.loader.SkinManager;
  * Created by sskbskdrin on 2018/3/2.
  */
 public class HomeFragment extends BaseFragment implements View.OnClickListener, BluetoothScanListener,
-        DeviceStateListener {
+    DeviceStateListener {
     private static final String TAG = "HomeFragment";
 
     private static final int WHAT_CLOSE = 1001;
@@ -146,7 +148,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         }
                         ToastUtil.showTip(getContext(), "设备已绑定", "");
                         Device.addDevice(ServiceManager.getInstance().getDeviceAddress(), ServiceManager.getInstance
-                                ().getDeviceName());
+                            ().getDeviceName());
                     } else {
                         ToastUtil.showTip(getContext(), "设备拒绝绑定", "");
                     }
@@ -207,7 +209,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 }
             }
             ss.setSpan(new ForegroundColorSpan(CommonUtils.getColor(getContext(), R.color.secondary)), 5, ss.length()
-                    , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
         mAlertTipView.setCompoundDrawables(left, null, null, null);
@@ -228,11 +230,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         lastDosage = totalDosage;
         if (Device.getLastTotalDosage() < 0) {
             baseTotalDosage = lastDosage;
+            loadTotalDosage();
         }
 
         float scale = (float) (baseTotalDosage / Device.getAlertTotalThreshold());
         int level = (int) (10000 * (0.855 * scale + 0.07246f));
-        SpannableString ss = new SpannableString("总剂量\n" + translate(value) + "Sv");
+        SpannableString ss = new SpannableString("总剂量\n" + translate((float) baseTotalDosage) + "Sv");
 
         Device.setLastTotalDosage((float) baseTotalDosage);
         if (baseTotalDosage >= Device.getAlertTotalThreshold()) {
@@ -248,7 +251,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             mTotalDosageView.setTextColor(CommonUtils.getColor(getContext(), R.color.white));
             mTotalDosageTipView.setVisibility(View.INVISIBLE);
             ss.setSpan(new ForegroundColorSpan(CommonUtils.getColor(getContext(), R.color.secondary)), 3, ss.length()
-                    , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                , Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         mTotalDosageView.setText(ss);
     }
@@ -278,7 +281,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         mTotalDosageTipView = getView(R.id.home_total_tip);
         mTotalDosageStaticDrawable = CommonUtils.getDrawable(BabyApp.getContext(), R.drawable.home_s_total_dosage_bg);
         mTotalDosageDynamicDrawable = new BottleDrawable(BitmapFactory.decodeResource(getResources(), R.drawable
-                .home_d_total_dosage_down));
+            .home_d_total_dosage_down));
 
         mChartLeftView = getView(R.id.home_page_left);
         mChartLeftView.setOnClickListener(this);
@@ -485,6 +488,19 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         mHandler.removeMessages(WHAT_CLOSE);
     }
 
+    private String translate(float value) {
+        String unit = "μ";
+        if (value > 1000000) {
+            value = value / 1000000;
+            unit = "";
+        } else if (value > 1000) {
+            value = value / 1000;
+            unit = "m";
+        }
+        NumberFormat format = new DecimalFormat("#####0.000");
+        return format.format(value) + unit;
+    }
+
     private String translate(String value) {
         if (TextUtils.isEmpty(value) || value.length() < 2) {
             return "";
@@ -526,6 +542,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
             @Override
             public void callback(Double value) {
+                L.d(TAG, "loadTotalDosage: " + value);
                 baseTotalDosage = value;
             }
         });
