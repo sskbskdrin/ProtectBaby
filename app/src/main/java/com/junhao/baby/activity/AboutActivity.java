@@ -145,8 +145,7 @@ public class AboutActivity extends CommonActivity<DeviceBean> {
         holder.setImageResource(R.id.item_common_icon, R.mipmap.hard_update_icon);
         holder.setText(R.id.item_common_title, "固件升级");
         holder.setText(R.id.item_common_name, "检查更新固件");
-        showView(true, holder.getView(R.id.item_common_icon), holder.getView(R.id
-                .item_common_title), holder.getView
+        showView(true, holder.getView(R.id.item_common_icon), holder.getView(R.id.item_common_title), holder.getView
                 (R.id.item_common_name), holder.getView(R.id.item_common_arrow));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,76 +161,78 @@ public class AboutActivity extends CommonActivity<DeviceBean> {
     }
 
     private void query() {
-        DownloadManager.getInstance().addDlTask("query",
-                "http://106.37.108.30:5001/release/medical/msg.html", "", new IDownloadListener() {
-                    public void onDlStart(String tag) {
-                        showLoadingDialog("正在检查固件");
-                    }
+        DownloadManager.getInstance().addDlTask("query", "http://106.37.108.30:5001/release/medical/firmware.json",
+                "", new IDownloadListener() {
+            public void onDlStart(String tag) {
+                showLoadingDialog("正在检查固件");
+            }
 
-                    @Override
-                    public void onDlCompleted(String tag, byte[] data, int length) {
-                        String result = new String(data);
-                        L.d(TAG, result);
-                        try {
-                            JSONObject object = new JSONObject(result);
-                            maxVersion = Integer.parseInt(object.optString("version", "0"));
-                            binName = object.optString("upgradefile");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        if (maxVersion > 0 && ServiceManager.getInstance().isConnected()) {
-                            downloadFile();
-                        } else {
-                            onDlError(tag, 0);
-                        }
+            @Override
+            public void onDlCompleted(String tag, byte[] data, int length) {
+                String result = new String(data);
+                L.d(TAG, result);
+                try {
+                    JSONObject object = new JSONObject(result);
+                    JSONObject info = object.optJSONObject("binInfo");
+                    if (info != null) {
+                        maxVersion = info.optInt("versionCode");
+                        binName = info.optString("name");
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (maxVersion > 0 && ServiceManager.getInstance().isConnected()) {
+                    downloadFile();
+                } else {
+                    onDlError(tag, 0);
+                }
+            }
 
-                    @Override
-                    public void onDlError(String tag, int errorCode) {
-                        hideLoadingDialog();
-                        ToastUtil.show(mContext, "固件已是最新版本");
-                    }
-                });
+            @Override
+            public void onDlError(String tag, int errorCode) {
+                hideLoadingDialog();
+                ToastUtil.show(mContext, "固件已是最新版本");
+            }
+        });
         DownloadManager.getInstance().startDlTask("query");
     }
 
     private void downloadFile() {
-        DownloadManager.getInstance().addDlTask("download",
-                "http://106.37.108.30:5001/release/medical/" + binName, "", new IDownloadListener
-                        () {
+        DownloadManager.getInstance().addDlTask("download", "http://106.37.108.30:5001/release/medical/" + binName,
+                "", new IDownloadListener() {
 
-                    @Override
-                    public void onDlStart(String tag) {
-                    }
+            @Override
+            public void onDlStart(String tag) {
+            }
 
-                    @Override
-                    public void onDlCompleted(String tag, byte[] data, int length) {
-                        File file = new File(getFilesDir(), binName);
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        try {
-                            file.createNewFile();
-                            FileOutputStream fos = new FileOutputStream(file);
-                            fos.write(data);
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Log.d(TAG, "onDlCompleted: " + file.length());
-                        if (maxVersion > 0 && ServiceManager.getInstance().isConnected()) {
-                            FirmwareUpdate.getInstance().startUpdate(file, maxVersion);
-                        } else {
-                            onDlError(tag, 0);
-                        }
-                    }
+            @Override
+            public void onDlCompleted(String tag, byte[] data, int length) {
+                File file = new File(getFilesDir(), binName);
+                if (file.exists()) {
+                    file.delete();
+                }
+                try {
+                    file.createNewFile();
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(data);
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d(TAG, "onDlCompleted: " + file.length());
+                if (maxVersion > 0 && ServiceManager.getInstance().isConnected()) {
+                    FirmwareUpdate.getInstance().startUpdate(file, maxVersion);
+                } else {
+                    onDlError(tag, 0);
+                }
+            }
 
-                    @Override
-                    public void onDlError(String tag, int errorCode) {
-                        hideLoadingDialog();
-                        ToastUtil.show(mContext, "固件已是最新版本");
-                    }
-                });
+            @Override
+            public void onDlError(String tag, int errorCode) {
+                hideLoadingDialog();
+                ToastUtil.show(mContext, "固件已是最新版本");
+            }
+        });
         DownloadManager.getInstance().startDlTask("download");
     }
 
